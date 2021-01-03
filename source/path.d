@@ -550,6 +550,24 @@ struct Path
     }
 
 
+    /** */
+    pragma( inline )
+    void opAssign( Path b )
+    {
+        this._path = b._path;
+    }
+
+
+    ///
+    unittest
+    {
+        Path p1 = Path( r"C:\" );
+        Path p2 = Path( r"C:\Program Files" );
+        p1 = p2;
+        assert( p1 == p2 );
+    }
+
+
     ///** */
     //T entity( T )()
     //{
@@ -578,5 +596,27 @@ struct Path
         assert( Path( r"C:\Program Files\"          ).rest._path == r"Program Files" );
         assert( Path( r"C:\Program Files\Microsoft" ).rest._path == r"Program Files\Microsoft" );
         assert( Path( r""                           ).rest._path == r"" );
+    }
+
+
+    /** */
+    bool startsWith( Path b )
+    {
+        import std.algorithm : startsWith;
+
+        return pathSplitter( _path ).startsWith( pathSplitter( b._path ) );
+    }
+
+
+    ///
+    unittest
+    {
+        assert( Path( r"C:\"                        ).startsWith( Path( r"C:\") ) );
+        assert( Path( r"C:"                         ).startsWith( Path( r"C:\") ) );
+        assert( Path( r"C:\Program Files"           ).startsWith( Path( r"C:\") ) );
+        assert( Path( r"C:\Program Files\"          ).startsWith( Path( r"C:\") ) );
+        assert( Path( r"C:\Program Files\Microsoft" ).startsWith( Path( r"C:\") ) );
+
+        assert( !Path( r""                           ).startsWith( Path( r"C:\") ) );
     }
 }
